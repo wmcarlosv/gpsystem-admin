@@ -5,6 +5,7 @@ namespace App;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Auth;
 
 class User extends \TCG\Voyager\Models\User
 {
@@ -36,4 +37,13 @@ class User extends \TCG\Voyager\Models\User
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    public function scopeSeenRole($query){
+        if(Auth::user()->role->name != 'admin'){
+            return $query->select('users.*')->join('roles','roles.id','=','users.role_id')->where('roles.name','<>','admin');
+        }else{
+            return $query;
+        }
+        
+    }
 }
